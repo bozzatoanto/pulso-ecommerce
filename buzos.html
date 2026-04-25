@@ -5,25 +5,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pulso | Buzos</title>
-  <link rel="icon" href="imagenes/favicon.png" type="image/png">
+  <link rel="icon" href="imagenes/favicon.svg" type="image/png">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
   <header>
+
     <nav class="navbar">
       <div class="logo">
         <a href="index.html">
-          <img src="imagenes/favicon.png" alt="Logo Pulso">
+          <img src="imagenes/favicon.svg" alt="Logo Pulso">
         </a>
       </div>
 
       <ul class="nav-links nav-left">
         <li><a href="index.html">Home</a></li>
-        <li><a href="remeras.html">Remeras</a></li>
-        <li><a href="buzos.html">Buzos</a></li>
-        <li><a href="pantalones.html">Pantalones</a></li>
+
+        <li class="dropdown">
+          <a href="#">Categorías</a>
+          <ul class="dropdown-menu">
+            <li><a href="remeras.html">Remeras</a></li>
+            <li><a href="buzos.html">Buzos</a></li>
+            <li><a href="pantalones.html">Pantalones</a></li>
+          </ul>
+        </li>
       </ul>
 
       <ul class="nav-links nav-right">
@@ -35,19 +42,83 @@
   </header>
 
   <main class="contenedor">
-    <h1>Buzos</h1>
-    <p>Descubrí nuestros buzos urbanos, cómodos y con estilo.</p>
-    <div class="galeria-categoria">
-      <div class="card-img">
-        <img src="imagenes/buzo-gris.png" alt="Buzo gris">
+    <section class="category-section">
+
+      <div class="category-hero">
+        <div class="category-info">
+          <span class="section-tag">EXCLUSIVE</span>
+          <h1 class="category-title">Buzos</h1>
+          <p class="category-text">
+            Explorá nuestra selección de buzos streetwear de Pulso.
+            Estilos, comodidad y actitud en una misma colección.
+          </p>
+        </div>
+
+        <div class="category-featured">
+          <article class="featured-card featured-main">
+            <img src="imagenes/buzos/buzo_detalle_1.webp" alt="Detalle de buzo">
+          </article>
+
+          <article class="featured-card featured-secondary">
+            <img src="imagenes/buzos/buzo_detalle_2.webp" alt="Detalle de buzo">
+          </article>
+
+          <article class="featured-card featured-secondary">
+            <img src="imagenes/buzos/buzo_detalle_3.webp" alt="Detalle de buzo">
+          </article>
+        </div>
       </div>
-      <div class="card-img">
-        <img src="imagenes/buzo-gris2.png" alt="Buzo gris">
+
+      <div class="category-grid-section">
+        <div class="section-head">
+          <h2>SS'26</h2>
+          <a href="#" class="ver-todas">Ver todas</a>
+        </div>
+
+        <div class="productos-grid">
+          <article class="producto-card">
+            <div class="producto-slider">
+              <img src="imagenes/buzos/buzo_naranja_1.webp" alt="Buzo mandi">
+              <img src="imagenes/buzos/buzo_naranja_2.webp" alt="Buzo mandi">
+              <img src="imagenes/buzos/buzo_naranja_3.webp" alt="Buzo mandi">
+            </div>
+            <h3>Buzo Mandi</h3>
+            <p>$35.000</p>
+          </article>
+
+          <article class="producto-card">
+            <div class="producto-slider">
+              <img src="imagenes/buzos/buzo_azul_1.webp" alt="Buzo ocean">
+              <img src="imagenes/buzos/buzo_azul_2.webp" alt="Buzo ocean">
+              <img src="imagenes/buzos/buzo_azul_3.webp" alt="Buzo ocean">
+            </div>
+            <h3>Buzo Ocean</h3>
+            <p>$34.000</p>
+          </article>
+
+          <article class="producto-card">
+            <div class="producto-slider">
+              <img src="imagenes/buzos/buzo_negro_1.webp" alt="Buzo dark">
+              <img src="imagenes/buzos/buzo_negro_2.webp" alt="Buzo dark">
+              <img src="imagenes/buzos/buzo_negro_3.webp" alt="Buzo dark">
+            </div>
+            <h3>Buzo Dark</h3>
+            <p>$46.000</p>
+          </article>
+
+          <article class="producto-card">
+            <div class="producto-slider">
+              <img src="imagenes/buzos/buzo_verde_1.webp" alt="Buzo glow">
+              <img src="imagenes/buzos/buzo_verde_2.webp" alt="Buzo glow">
+              <img src="imagenes/buzos/buzo_verde_3.webp" alt="Buzo glow">
+            </div>
+            <h3>Buzo Glow</h3>
+            <p>$50.000</p>
+          </article>
+        </div>
       </div>
-      <div class="card-img">
-        <img src="imagenes/buzo-gris3.png" alt="Buzo gris">
-      </div>
-    </div>
+
+    </section>
   </main>
 
 </body>

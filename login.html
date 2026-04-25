@@ -5,25 +5,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pulso | Login</title>
-  <link rel="icon" href="imagenes/favicon.png" type="image/png">
+  <link rel="icon" href="imagenes/favicon.svg" type="image/png">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
   <header>
+
     <nav class="navbar">
       <div class="logo">
         <a href="index.html">
-          <img src="imagenes/favicon.png" alt="Logo Pulso">
+          <img src="imagenes/favicon.svg" alt="Logo Pulso">
         </a>
       </div>
 
       <ul class="nav-links nav-left">
         <li><a href="index.html">Home</a></li>
-        <li><a href="remeras.html">Remeras</a></li>
-        <li><a href="buzos.html">Buzos</a></li>
-        <li><a href="pantalones.html">Pantalones</a></li>
+
+        <li class="dropdown">
+          <a href="#">Categorías</a>
+          <ul class="dropdown-menu">
+            <li><a href="remeras.html">Remeras</a></li>
+            <li><a href="buzos.html">Buzos</a></li>
+            <li><a href="pantalones.html">Pantalones</a></li>
+          </ul>
+        </li>
       </ul>
 
       <ul class="nav-links nav-right">
@@ -34,22 +41,36 @@
     </nav>
   </header>
 
-  <main class="contenedor">
-    <section class="form-section">
+  <main class="auth-main">
+    <section class="auth-card">
+
       <h1>Iniciar sesión</h1>
 
-      <form action="#" method="post" class="formulario">
+      <form action="#" method="post" class="auth-form">
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+        <div class="auth-input">
+          <span class="input-icon">@</span>
+          <input type="email" id="email" name="email" placeholder="e-mail address" required>
+        </div>
 
         <label for="password">Contraseña</label>
-        <input type="password" id="password" name="password" required>
+        <div class="auth-input auth-input-password">
+          <span class="input-icon">✦</span>
+          <input type="password" id="password" name="password" placeholder="password" required>
+          <a href="#" class="forgot-link">Olvidé mi contraseña</a>
 
-        <button type="submit">Ingresar</button>
+        </div>
+
+
+        <button type="submit" class="auth-submit">→</button>
       </form>
+
+      <p class="auth-footer-link">
+        <a href="registro.html">¿No tenés cuenta? Registrate</a>
+
+      </p>
     </section>
   </main>
-
 </body>
 
 </html>

@@ -44,16 +44,10 @@ pulso-ecommerce/
 ├── style.css
 ├── README.md
 └── imagenes/
-    ├── favicon.png
-    ├── buzo-gris.png
-    ├── buzo-gris2.png
-    ├── buzo-gris3.png
-    ├── remera-negra.png
-    ├── remera-negra2.png
-    ├── remera-negra3.png
-    └── pantalon-baggy.png
-    └── pantalon-baggy2.png
-    └── pantalon-baggy3.png
+    ├── favicon.svg
+    ├── remeras
+    ├── buzos
+    └── pantalones
 
 ## Funcionalidades incluidas
 - Navegación entre páginas mediante navbar
@@ -73,3 +67,31 @@ Las categorías principales del sitio son:
 ## Aclaración
 Este proyecto corresponde a una primera etapa de desarrollo, por lo que actualmente no incluye conexión a base de datos ni validación real de usuarios.  
 Las páginas de login, registro y logout forman parte de la estructura visual y funcional básica solicitada en la consigna.
+
+/* =========================
+SEGUNDA ENTREGA
+========================= */
+
+## Cambios realizados
+
+Durante el desarrollo del proyecto se trabajó en una mejora integral de la interfaz y la estructura visual del sitio.
+
+### Navegación
+Se rediseñó la **navbar**, simplificando la navegación principal y agrupando las secciones de productos dentro de un menú desplegable de **Categorías**. Esto permitió una estructura más ordenada y consistente en todas las páginas.
+
+### Página de inicio
+Se actualizó la **home** para mejorar la presentación general del sitio, reorganizando el contenido principal, ajustando la estética de las cards y reforzando la jerarquía visual de las categorías.
+
+### Categorías de productos
+Se desarrolló la estructura completa de las páginas de **Remeras**, **Buzos** y **Pantalones**, manteniendo una identidad visual uniforme entre todas las categorías.  
+En cada una se trabajó sobre:
+- encabezado principal
+- sección destacada de imágenes
+- grilla de productos
+- presentación individual de cada prenda
+
+### Formularios
+Se rediseñaron las pantallas de **Login** y **Registro**, aplicando una estética inspirada en **glass**, para lograr una interfaz más moderna y alineada con el estilo general del sitio.
+
+### Estilo visual general
+Se realizaron ajustes globales en la interfaz para unificar la experiencia visual del proyecto, mejorando la coherencia entre navegación, categorías, formularios y página principal.

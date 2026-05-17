@@ -1,0 +1,17 @@
+{
+  "name": "pulso-ecommerce",
+  "version": "1.0.0",
+  "description": "Ecommerce Pulso - Autor Antonella Bozzato",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite --open",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "Antonella Bozzato",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^8.0.13"
+  }
+}

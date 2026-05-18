@@ -9,7 +9,7 @@ function obtenerRuta(pagina) {
 }
 
 function obtenerRutaLogo() {
-  return estaEnCarpetaPages() ? "../img/favicon.svg" : "img/favicon.svg";
+  return estaEnCarpetaPages() ? "../img/favicon.png" : "img/favicon.png";
 }
 
 function renderizarNavbar() {

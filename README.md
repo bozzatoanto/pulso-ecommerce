@@ -44,7 +44,7 @@ pulso-ecommerce/
 ├── style.css
 ├── README.md
 └── img/
-    ├── favicon.svg
+    ├── favicon.png
     ├── remeras
     ├── buzos
     └── pantalones

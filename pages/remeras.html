@@ -77,55 +77,122 @@
       <div class="category-grid-section">
         <div class="section-head">
           <h2>SS'26</h2>
-          <a href="#" class="ver-todas">Ver todas</a>
         </div>
 
         <div class="productos-grid">
-          <article class="producto-card">
+
+          <article class="producto-card" data-nombre="Remera Raw" data-precio="22900" data-precio-texto="$22.900"
+            data-descripcion="Remera blanca de estilo urbano, cómoda y versátil. Una prenda base para combinar con cualquier outfit streetwear de uso diario.">
             <div class="producto-slider">
               <img src="../img/remeras/remera_blanca_1.webp" alt="Remera Raw">
               <img src="../img/remeras/remera_blanca_2.webp" alt="Remera Raw">
               <img src="../img/remeras/remera_blanca_3.webp" alt="Remera Raw">
             </div>
+
             <h3>Remera Raw</h3>
             <p>$22.900</p>
+
+            <div class="producto-acciones">
+              <button class="btn-cantidad btn-restar" type="button">-</button>
+              <span class="cantidad-producto">0</span>
+              <button class="btn-cantidad btn-sumar" type="button">+</button>
+              <button class="btn-carrito" type="button">🛒</button>
+            </div>
           </article>
 
-          <article class="producto-card">
+          <article class="producto-card" data-nombre="Remera Buddy" data-precio="24500" data-precio-texto="$24.500"
+            data-descripcion="Remera gris con estética relajada y diseño moderno. Ideal para looks casuales, urbanos y combinaciones de temporada.">
             <div class="producto-slider">
               <img src="../img/remeras/remera_gris_2.webp" alt="Remera Buddy">
               <img src="../img/remeras/remera_gris_1.webp" alt="Remera Buddy">
               <img src="../img/remeras/remera_gris_3.webp" alt="Remera Buddy">
             </div>
+
             <h3>Remera Buddy</h3>
             <p>$24.500</p>
+
+            <div class="producto-acciones">
+              <button class="btn-cantidad btn-restar" type="button">-</button>
+              <span class="cantidad-producto">0</span>
+              <button class="btn-cantidad btn-sumar" type="button">+</button>
+              <button class="btn-carrito" type="button">🛒</button>
+            </div>
           </article>
 
-          <article class="producto-card">
+          <article class="producto-card" data-nombre="Remera Signal" data-precio="22900" data-precio-texto="$22.900"
+            data-descripcion="Remera negra con diseño limpio, cómoda y fácil de combinar. Una opción clave para outfits urbanos con estilo minimalista.">
             <div class="producto-slider">
               <img src="../img/remeras/remera_negra_1.webp" alt="Remera Signal">
               <img src="../img/remeras/remera_negra_2.webp" alt="Remera Signal">
               <img src="../img/remeras/remera_negra_3.webp" alt="Remera Signal">
             </div>
+
             <h3>Remera Signal</h3>
             <p>$22.900</p>
+
+            <div class="producto-acciones">
+              <button class="btn-cantidad btn-restar" type="button">-</button>
+              <span class="cantidad-producto">0</span>
+              <button class="btn-cantidad btn-sumar" type="button">+</button>
+              <button class="btn-carrito" type="button">🛒</button>
+            </div>
           </article>
 
-          <article class="producto-card">
+          <article class="producto-card" data-nombre="Remera Line" data-precio="22900" data-precio-texto="$22.900"
+            data-descripcion="Remera roja con presencia visual y estilo streetwear. Pensada para sumar color y personalidad a un look urbano.">
             <div class="producto-slider">
               <img src="../img/remeras/remera_roja_1.webp" alt="Remera Line">
               <img src="../img/remeras/remera_roja_2.webp" alt="Remera Line">
               <img src="../img/remeras/remera_roja_3.webp" alt="Remera Line">
             </div>
+
             <h3>Remera Line</h3>
             <p>$22.900</p>
+
+            <div class="producto-acciones">
+              <button class="btn-cantidad btn-restar" type="button">-</button>
+              <span class="cantidad-producto">0</span>
+              <button class="btn-cantidad btn-sumar" type="button">+</button>
+              <button class="btn-carrito" type="button">🛒</button>
+            </div>
           </article>
+
         </div>
       </div>
 
     </section>
   </main>
 
+  <div class="producto-modal" id="productoModal">
+    <div class="modal-contenido">
+      <button class="modal-cerrar" id="cerrarModal" type="button">×</button>
+
+      <div class="modal-slider" id="modalSlider"></div>
+
+      <div class="modal-info">
+        <h2 id="modalTitulo"></h2>
+        <p id="modalDescripcion"></p>
+        <strong id="modalPrecio"></strong>
+
+        <div class="modal-acciones">
+          <div class="modal-cantidad-box">
+            <button class="btn-cantidad modal-control-btn" id="modalRestar" type="button">-</button>
+            <span class="cantidad-producto modal-cantidad-numero" id="modalCantidad">0</span>
+            <button class="btn-cantidad modal-control-btn" id="modalSumar" type="button">+</button>
+          </div>
+
+          <button class="btn-carrito modal-btn-carrito" id="modalAgregarCarrito" type="button">
+            🛒 Agregar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/productos.js"></script>
 </body>
 
 </html>

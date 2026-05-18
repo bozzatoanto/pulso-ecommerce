@@ -9,11 +9,11 @@ function obtenerRuta(pagina) {
 }
 
 function obtenerRutaLogo() {
-  return estaEnCarpetaPages() ? "../img/favicon.png" : "img/favicon.png";
+  return estaEnCarpetaPages() ? "../img/favicon.svg" : "img/favicon.svg";
 }
 
 function renderizarNavbar() {
-  if (!header || !window.paginas) return;
+  if (!header || !window.paginas || !window.usuarioEstaLogueado) return;
 
   const home = window.paginas.find((pagina) => pagina.titulo === "Home");
   const remeras = window.paginas.find((pagina) => pagina.titulo === "Remeras");
@@ -27,7 +27,7 @@ function renderizarNavbar() {
   header.innerHTML = `
     <nav class="navbar">
       <div class="logo">
-        <a href="${obtenerRuta(home)}">
+        <a href="${obtenerRuta(home)}" class="logo-link">
           <img src="${obtenerRutaLogo()}" alt="Logo Pulso">
         </a>
       </div>

@@ -1,0 +1,158 @@
+[
+  {
+    "id": 1,
+    "categoria": "remeras",
+    "nombre": "Remera Raw",
+    "precio": 22900,
+    "precioTexto": "$22.900",
+    "descripcion": "Remera blanca de estilo urbano, cómoda y versátil. Una prenda base para combinar con cualquier outfit streetwear de uso diario.",
+    "imagenes": [
+      "remeras/remera_blanca_1.webp",
+      "remeras/remera_blanca_2.webp",
+      "remeras/remera_blanca_3.webp"
+    ]
+  },
+  {
+    "id": 2,
+    "categoria": "remeras",
+    "nombre": "Remera Buddy",
+    "precio": 24500,
+    "precioTexto": "$24.500",
+    "descripcion": "Remera gris con estética relajada y diseño moderno. Ideal para looks casuales, urbanos y combinaciones de temporada.",
+    "imagenes": [
+      "remeras/remera_gris_2.webp",
+      "remeras/remera_gris_1.webp",
+      "remeras/remera_gris_3.webp"
+    ]
+  },
+  {
+    "id": 3,
+    "categoria": "remeras",
+    "nombre": "Remera Signal",
+    "precio": 22900,
+    "precioTexto": "$22.900",
+    "descripcion": "Remera negra con diseño limpio, cómoda y fácil de combinar. Una opción clave para outfits urbanos con estilo minimalista.",
+    "imagenes": [
+      "remeras/remera_negra_1.webp",
+      "remeras/remera_negra_2.webp",
+      "remeras/remera_negra_3.webp"
+    ]
+  },
+  {
+    "id": 4,
+    "categoria": "remeras",
+    "nombre": "Remera Line",
+    "precio": 22900,
+    "precioTexto": "$22.900",
+    "descripcion": "Remera roja con presencia visual y estilo streetwear. Pensada para sumar color y personalidad a un look urbano.",
+    "imagenes": [
+      "remeras/remera_roja_1.webp",
+      "remeras/remera_roja_2.webp",
+      "remeras/remera_roja_3.webp"
+    ]
+  },
+  {
+    "id": 5,
+    "categoria": "buzos",
+    "nombre": "Buzo Mandi",
+    "precio": 35000,
+    "precioTexto": "$35.000",
+    "descripcion": "Buzo streetwear cómodo, con diseño relajado, textura suave y estilo urbano para uso diario. Ideal para combinar con outfits casuales y modernos.",
+    "imagenes": [
+      "buzos/buzo_naranja_1.webp",
+      "buzos/buzo_naranja_2.webp",
+      "buzos/buzo_naranja_3.webp"
+    ]
+  },
+  {
+    "id": 6,
+    "categoria": "buzos",
+    "nombre": "Buzo Ocean",
+    "precio": 34000,
+    "precioTexto": "$34.000",
+    "descripcion": "Buzo azul de estilo urbano, cómodo y versátil. Pensado para looks relajados, con una estética moderna y fácil de combinar.",
+    "imagenes": [
+      "buzos/buzo_azul_1.webp",
+      "buzos/buzo_azul_2.webp",
+      "buzos/buzo_azul_3.webp"
+    ]
+  },
+  {
+    "id": 7,
+    "categoria": "buzos",
+    "nombre": "Buzo Dark",
+    "precio": 46000,
+    "precioTexto": "$46.000",
+    "descripcion": "Buzo negro con estética streetwear, diseño limpio y gran versatilidad. Una prenda clave para outfits urbanos de temporada.",
+    "imagenes": [
+      "buzos/buzo_negro_1.webp",
+      "buzos/buzo_negro_2.webp",
+      "buzos/buzo_negro_3.webp"
+    ]
+  },
+  {
+    "id": 8,
+    "categoria": "buzos",
+    "nombre": "Buzo Glow",
+    "precio": 50000,
+    "precioTexto": "$50.000",
+    "descripcion": "Buzo verde con diseño moderno, cómodo y con personalidad visual. Ideal para destacar dentro de una propuesta streetwear.",
+    "imagenes": [
+      "buzos/buzo_verde_1.webp",
+      "buzos/buzo_verde_2.webp",
+      "buzos/buzo_verde_3.webp"
+    ]
+  },
+  {
+    "id": 9,
+    "categoria": "pantalones",
+    "nombre": "Pantalón Sky",
+    "precio": 35000,
+    "precioTexto": "$35.000",
+    "descripcion": "Pantalón celeste de estética streetwear, con calce cómodo y diseño urbano. Ideal para combinar con buzos, remeras oversize y outfits relajados.",
+    "imagenes": [
+      "pantalones/pantalon_celeste_1.webp",
+      "pantalones/pantalon_celeste_2.webp",
+      "pantalones/pantalon_celeste_3.webp"
+    ]
+  },
+  {
+    "id": 10,
+    "categoria": "pantalones",
+    "nombre": "Pantalón Grey",
+    "precio": 24500,
+    "precioTexto": "$24.500",
+    "descripcion": "Pantalón gris de corte moderno, cómodo y versátil. Una prenda base para armar looks urbanos con estilo minimalista.",
+    "imagenes": [
+      "pantalones/pantalon_gris_1.webp",
+      "pantalones/pantalon_gris_2.webp",
+      "pantalones/pantalon_gris_3.webp"
+    ]
+  },
+  {
+    "id": 11,
+    "categoria": "pantalones",
+    "nombre": "Pantalón Dark",
+    "precio": 22900,
+    "precioTexto": "$22.900",
+    "descripcion": "Pantalón negro con diseño limpio, estilo urbano y gran versatilidad. Perfecto para looks diarios con estética streetwear.",
+    "imagenes": [
+      "pantalones/pantalon_negro_1.webp",
+      "pantalones/pantalon_negro_2.webp",
+      "pantalones/pantalon_negro_3.webp"
+    ]
+  },
+  {
+    "id": 12,
+    "categoria": "pantalones",
+    "nombre": "Pantalón Glow",
+    "precio": 22900,
+    "precioTexto": "$22.900",
+    "descripcion": "Pantalón estampado con personalidad visual, pensado para destacar dentro de un outfit urbano. Cómodo, moderno y con presencia.",
+    "imagenes": [
+      "pantalones/pantalon_estampado_1.webp",
+      "pantalones/pantalon_estampado_2.webp",
+      "pantalones/pantalon_estampado_3.webp"
+    ]
+  }
+]

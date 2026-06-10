@@ -20,9 +20,7 @@ function estaEnCarpetaPages() {
 }
 
 function obtenerRutaJson() {
-  return estaEnCarpetaPages()
-    ? "../data/productos.json"
-    : "data/productos.json";
+  return "/data/productos.json";
 }
 
 function obtenerRutaImagen(rutaImagen) {
@@ -101,7 +99,7 @@ function crearCardProducto(producto) {
         <button class="btn-cantidad btn-restar" type="button" data-id="${producto.id}">-</button>
         <span class="cantidad-producto" id="cantidad-${producto.id}">${cantidades[producto.id]}</span>
         <button class="btn-cantidad btn-sumar" type="button" data-id="${producto.id}">+</button>
-        <button class="btn-carrito" type="button" data-id="${producto.id}">🛒</button>
+        <button class="btn-carrito" type="button" data-id="${producto.id}" aria-label="Agregar al carrito">🛒</button>
       </div>
     </article>
   `;
@@ -156,7 +154,51 @@ function guardarCarrito(carrito) {
   localStorage.setItem("carritoPulso", JSON.stringify(carrito));
 }
 
-function agregarAlCarrito(idProducto) {
+function obtenerImagenParaAnimacion(elementoOrigen) {
+  if (!elementoOrigen) return null;
+
+  if (elementoOrigen.tagName === "IMG") {
+    return elementoOrigen;
+  }
+
+  return elementoOrigen.querySelector("img");
+}
+
+function animarProductoAlCarrito(elementoOrigen) {
+  const imagenProducto = obtenerImagenParaAnimacion(elementoOrigen);
+  const linkCarrito = document.querySelector('a[href$="carrito.html"]');
+
+  if (!imagenProducto || !linkCarrito) return;
+
+  const imagenRect = imagenProducto.getBoundingClientRect();
+  const carritoRect = linkCarrito.getBoundingClientRect();
+
+  const imagenClon = imagenProducto.cloneNode(true);
+
+  imagenClon.classList.add("animacion-carrito-img");
+
+  imagenClon.style.top = `${imagenRect.top}px`;
+  imagenClon.style.left = `${imagenRect.left}px`;
+  imagenClon.style.width = `${imagenRect.width}px`;
+  imagenClon.style.height = `${imagenRect.height}px`;
+
+  document.body.appendChild(imagenClon);
+
+  requestAnimationFrame(() => {
+    imagenClon.style.top = `${carritoRect.top + carritoRect.height / 2}px`;
+    imagenClon.style.left = `${carritoRect.left + carritoRect.width / 2}px`;
+    imagenClon.style.width = "28px";
+    imagenClon.style.height = "28px";
+    imagenClon.style.opacity = "0";
+    imagenClon.style.transform = "scale(0.35) rotate(12deg)";
+  });
+
+  setTimeout(() => {
+    imagenClon.remove();
+  }, 850);
+}
+
+function agregarAlCarrito(idProducto, elementoOrigen = null) {
   const producto = obtenerProductoPorId(idProducto);
   const cantidad = cantidades[idProducto] || 0;
 
@@ -169,7 +211,9 @@ function agregarAlCarrito(idProducto) {
 
   const carrito = obtenerCarrito();
 
-  const productoExistente = carrito.find((item) => item.id === producto.id);
+  const productoExistente = carrito.find((item) => {
+    return item.id === producto.id;
+  });
 
   if (productoExistente) {
     productoExistente.cantidad += cantidad;
@@ -187,6 +231,10 @@ function agregarAlCarrito(idProducto) {
   guardarCarrito(carrito);
 
   actualizarCantidad(idProducto, 0);
+
+  if (elementoOrigen) {
+    animarProductoAlCarrito(elementoOrigen);
+  }
 }
 
 function abrirModal(idProducto) {
@@ -246,8 +294,9 @@ if (productosGrid) {
 
     if (botonCarrito) {
       const idProducto = Number(botonCarrito.dataset.id);
+      const cardProducto = botonCarrito.closest(".producto-card");
 
-      agregarAlCarrito(idProducto);
+      agregarAlCarrito(idProducto, cardProducto);
       return;
     }
 
@@ -295,7 +344,9 @@ if (modalAgregarCarrito) {
   modalAgregarCarrito.addEventListener("click", function () {
     if (!productoActivo) return;
 
-    agregarAlCarrito(productoActivo.id);
+    const imagenModal = modalSlider.querySelector("img");
+
+    agregarAlCarrito(productoActivo.id, imagenModal);
   });
 }
 

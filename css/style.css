@@ -321,12 +321,6 @@ body {
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
-.card a::after {
-  font-size: 18px;
-  margin-left: 8px;
-  transition: transform 0.25s ease;
-}
-
 .card a:hover {
   background: linear-gradient(180deg, #ffffff 0%, #dcdcdc 100%);
   transform: translateY(-2px);
@@ -1008,24 +1002,6 @@ body {
     text-align: center;
   }
 }
-.modal-acciones {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 28px;
-}
-
-.modal-btn-carrito {
-  height: 38px;
-  padding: 0 18px;
-  background: #111;
-  color: #fff;
-}
-
-.modal-btn-carrito:hover {
-  transform: scale(1.04);
-  opacity: 0.9;
-}
 
 @media (max-width: 900px) {
   .modal-acciones {
@@ -1263,5 +1239,164 @@ body {
 
   .carrito-resumen {
     text-align: left;
+  }
+}
+.animacion-carrito-img {
+  position: fixed;
+  z-index: 2000;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 18px;
+  pointer-events: none;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+  transition:
+    top 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    left 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.8s ease,
+    transform 0.8s ease;
+}
+
+
+.btn-eliminar-carrito {
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-eliminar-carrito:hover {
+  background: #d90429;
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 10px 26px rgba(217, 4, 41, 0.35);
+}
+
+.modal-confirmacion-eliminar {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-confirmacion-eliminar.modal-confirmacion-activo {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-confirmacion-card {
+  width: min(460px, 100%);
+  padding: 34px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(22px);
+  color: #fff;
+  transform: translateY(16px) scale(0.96);
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.modal-confirmacion-activo .modal-confirmacion-card {
+  transform: translateY(0) scale(1);
+}
+
+.modal-confirmacion-tag {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.modal-confirmacion-card h2 {
+  margin: 0 0 12px;
+  font-size: 2rem;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.modal-confirmacion-card p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.modal-confirmacion-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.btn-cancelar-eliminar,
+.btn-confirmar-eliminar {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-cancelar-eliminar {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+
+.btn-cancelar-eliminar:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: scale(1.04);
+}
+
+.btn-confirmar-eliminar {
+  background: #d90429;
+  color: #fff;
+  box-shadow: 0 12px 32px rgba(217, 4, 41, 0.38);
+}
+
+.btn-confirmar-eliminar:hover {
+  background: #ef233c;
+  transform: scale(1.04);
+}
+
+@media (max-width: 520px) {
+  .modal-confirmacion-card {
+    padding: 26px;
+  }
+
+  .modal-confirmacion-card h2 {
+    font-size: 1.6rem;
+  }
+
+  .modal-confirmacion-acciones {
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancelar-eliminar,
+  .btn-confirmar-eliminar {
+    width: 100%;
   }
 }

@@ -2,12 +2,18 @@ window.usuarioEstaLogueado = function () {
   return sessionStorage.getItem("usuarioLogueado") === "true";
 };
 
-window.iniciarSesion = function () {
+window.obtenerUsuarioLogueado = function () {
+  return sessionStorage.getItem("usuarioEmail");
+};
+
+window.iniciarSesion = function (email) {
   sessionStorage.setItem("usuarioLogueado", "true");
+  sessionStorage.setItem("usuarioEmail", email);
 };
 
 window.cerrarSesion = function () {
   sessionStorage.removeItem("usuarioLogueado");
+  sessionStorage.removeItem("usuarioEmail");
 };
 
 const loginForm = document.getElementById("loginForm");
@@ -24,7 +30,7 @@ if (loginForm) {
       return;
     }
 
-    window.iniciarSesion();
+    window.iniciarSesion(email);
 
     window.location.href = "../index.html";
   });

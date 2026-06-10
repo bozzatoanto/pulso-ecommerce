@@ -19,9 +19,9 @@ function renderizarNavbar() {
   const remeras = window.paginas.find((pagina) => pagina.titulo === "Remeras");
   const buzos = window.paginas.find((pagina) => pagina.titulo === "Buzos");
   const pantalones = window.paginas.find((pagina) => pagina.titulo === "Pantalones");
+  const carrito = window.paginas.find((pagina) => pagina.titulo === "Carrito");
   const login = window.paginas.find((pagina) => pagina.titulo === "Login");
   const registro = window.paginas.find((pagina) => pagina.titulo === "Registro");
-  const carrito = window.paginas.find((pagina) => pagina.titulo === "Carrito");
 
   const estaLogueado = window.usuarioEstaLogueado();
 
@@ -46,17 +46,17 @@ function renderizarNavbar() {
         </li>
       </ul>
 
-<ul class="nav-links nav-right">
-  <li><a href="${obtenerRuta(carrito)}">Carrito</a></li>
-  ${
-    estaLogueado
-      ? `<li><a href="#" id="logoutBtn">Logout</a></li>`
-      : `
-        <li><a href="${obtenerRuta(login)}">Login</a></li>
-        <li><a href="${obtenerRuta(registro)}">Registro</a></li>
-      `
-  }
-</ul>
+      <ul class="nav-links nav-right">
+        <li><a href="${obtenerRuta(carrito)}">Carrito</a></li>
+        ${
+          estaLogueado
+            ? `<li><a href="#" id="logoutBtn">Logout</a></li>`
+            : `
+              <li><a href="${obtenerRuta(login)}">Login</a></li>
+              <li><a href="${obtenerRuta(registro)}">Registro</a></li>
+            `
+        }
+      </ul>
     </nav>
   `;
 

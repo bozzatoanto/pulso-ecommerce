@@ -1,13 +1,13 @@
 window.usuarioEstaLogueado = function () {
-  return localStorage.getItem("usuarioLogueado") === "true";
+  return sessionStorage.getItem("usuarioLogueado") === "true";
 };
 
 window.iniciarSesion = function () {
-  localStorage.setItem("usuarioLogueado", "true");
+  sessionStorage.setItem("usuarioLogueado", "true");
 };
 
 window.cerrarSesion = function () {
-  localStorage.removeItem("usuarioLogueado");
+  sessionStorage.removeItem("usuarioLogueado");
 };
 
 const loginForm = document.getElementById("loginForm");

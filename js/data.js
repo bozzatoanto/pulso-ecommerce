@@ -20,6 +20,11 @@ window.paginas = [
     rutaDesdePages: "pantalones.html"
   },
   {
+    titulo: "Carrito",
+    rutaDesdeRoot: "pages/carrito.html",
+    rutaDesdePages: "carrito.html"
+  },
+  {
     titulo: "Login",
     rutaDesdeRoot: "pages/login.html",
     rutaDesdePages: "login.html"

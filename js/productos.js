@@ -1,4 +1,4 @@
-const productoCards = document.querySelectorAll(".producto-card");
+const productosGrid = document.getElementById("productosGrid");
 
 const productoModal = document.getElementById("productoModal");
 const cerrarModal = document.getElementById("cerrarModal");
@@ -11,24 +11,117 @@ const modalRestar = document.getElementById("modalRestar");
 const modalSumar = document.getElementById("modalSumar");
 const modalAgregarCarrito = document.getElementById("modalAgregarCarrito");
 
+let productos = [];
 let productoActivo = null;
+let cantidades = {};
 
-function obtenerCantidad(card) {
-  return Number(card.dataset.cantidad || 0);
+function estaEnCarpetaPages() {
+  return window.location.pathname.includes("/pages/");
 }
 
-function actualizarCantidad(card, cantidad) {
-  const nuevaCantidad = Math.max(0, cantidad);
-  card.dataset.cantidad = nuevaCantidad;
+function obtenerRutaJson() {
+  return estaEnCarpetaPages()
+    ? "../data/productos.json"
+    : "data/productos.json";
+}
 
-  const cantidadTexto = card.querySelector(".cantidad-producto");
+function obtenerRutaImagen(rutaImagen) {
+  return estaEnCarpetaPages()
+    ? `../img/${rutaImagen}`
+    : `img/${rutaImagen}`;
+}
 
-  if (cantidadTexto) {
-    cantidadTexto.textContent = nuevaCantidad;
+function obtenerCategoriaActual() {
+  if (!productosGrid) return null;
+
+  return productosGrid.dataset.categoria;
+}
+
+async function cargarProductos() {
+  try {
+    const respuesta = await fetch(obtenerRutaJson());
+
+    if (!respuesta.ok) {
+      throw new Error("No se pudo cargar el archivo productos.json");
+    }
+
+    productos = await respuesta.json();
+
+    renderizarProductos();
+  } catch (error) {
+    console.error("Error al cargar productos:", error);
+
+    if (productosGrid) {
+      productosGrid.innerHTML = `
+        <p class="mensaje-error-productos">
+          No se pudieron cargar los productos.
+        </p>
+      `;
+    }
+  }
+}
+
+function renderizarProductos() {
+  if (!productosGrid) return;
+
+  const categoriaActual = obtenerCategoriaActual();
+
+  if (!categoriaActual) return;
+
+  const productosFiltrados = productos.filter((producto) => {
+    return producto.categoria === categoriaActual;
+  });
+
+  productosGrid.innerHTML = productosFiltrados
+    .map((producto) => crearCardProducto(producto))
+    .join("");
+}
+
+function crearCardProducto(producto) {
+  cantidades[producto.id] = cantidades[producto.id] || 0;
+
+  const imagenesHtml = producto.imagenes
+    .map((imagen) => {
+      return `
+        <img src="${obtenerRutaImagen(imagen)}" alt="${producto.nombre}">
+      `;
+    })
+    .join("");
+
+  return `
+    <article class="producto-card" data-id="${producto.id}">
+      <div class="producto-slider">
+        ${imagenesHtml}
+      </div>
+
+      <h3>${producto.nombre}</h3>
+      <p>${producto.precioTexto}</p>
+
+      <div class="producto-acciones">
+        <button class="btn-cantidad btn-restar" type="button" data-id="${producto.id}">-</button>
+        <span class="cantidad-producto" id="cantidad-${producto.id}">${cantidades[producto.id]}</span>
+        <button class="btn-cantidad btn-sumar" type="button" data-id="${producto.id}">+</button>
+        <button class="btn-carrito" type="button" data-id="${producto.id}">🛒</button>
+      </div>
+    </article>
+  `;
+}
+
+function obtenerProductoPorId(idProducto) {
+  return productos.find((producto) => producto.id === idProducto);
+}
+
+function actualizarCantidad(idProducto, nuevaCantidad) {
+  cantidades[idProducto] = Math.max(0, nuevaCantidad);
+
+  const cantidadCard = document.getElementById(`cantidad-${idProducto}`);
+
+  if (cantidadCard) {
+    cantidadCard.textContent = cantidades[idProducto];
   }
 
-  if (productoActivo === card && modalCantidad) {
-    modalCantidad.textContent = nuevaCantidad;
+  if (productoActivo && productoActivo.id === idProducto && modalCantidad) {
+    modalCantidad.textContent = cantidades[idProducto];
   }
 }
 
@@ -49,43 +142,74 @@ function mostrarAvisoCarrito(mensaje) {
   }, 2200);
 }
 
-function agregarAlCarrito(card) {
-  const cantidad = obtenerCantidad(card);
-  const nombre = card.dataset.nombre;
+function obtenerCarrito() {
+  const carritoGuardado = localStorage.getItem("carritoPulso");
+
+  if (!carritoGuardado) {
+    return [];
+  }
+
+  return JSON.parse(carritoGuardado);
+}
+
+function guardarCarrito(carrito) {
+  localStorage.setItem("carritoPulso", JSON.stringify(carrito));
+}
+
+function agregarAlCarrito(idProducto) {
+  const producto = obtenerProductoPorId(idProducto);
+  const cantidad = cantidades[idProducto] || 0;
+
+  if (!producto) return;
 
   if (cantidad <= 0) {
     mostrarAvisoCarrito("Primero elegí una cantidad para agregar al carrito.");
     return;
   }
 
-  mostrarAvisoCarrito(`${nombre} agregado al carrito. Cantidad: ${cantidad}`);
+  const carrito = obtenerCarrito();
+
+  const productoExistente = carrito.find((item) => item.id === producto.id);
+
+  if (productoExistente) {
+    productoExistente.cantidad += cantidad;
+  } else {
+    carrito.push({
+      id: producto.id,
+      nombre: producto.nombre,
+      precio: producto.precio,
+      precioTexto: producto.precioTexto,
+      imagen: producto.imagenes[0],
+      cantidad: cantidad
+    });
+  }
+
+  guardarCarrito(carrito);
+
+  actualizarCantidad(idProducto, 0);
 }
 
-function abrirModal(card) {
+function abrirModal(idProducto) {
   if (!productoModal || !modalSlider) return;
 
-  productoActivo = card;
+  const producto = obtenerProductoPorId(idProducto);
 
-  const nombre = card.dataset.nombre;
-  const descripcion = card.dataset.descripcion;
-  const precioTexto = card.dataset.precioTexto;
-  const cantidad = obtenerCantidad(card);
+  if (!producto) return;
 
-  modalTitulo.textContent = nombre;
-  modalDescripcion.textContent = descripcion;
-  modalPrecio.textContent = precioTexto;
-  modalCantidad.textContent = cantidad;
+  productoActivo = producto;
 
-  modalSlider.innerHTML = "";
+  modalTitulo.textContent = producto.nombre;
+  modalDescripcion.textContent = producto.descripcion;
+  modalPrecio.textContent = producto.precioTexto;
+  modalCantidad.textContent = cantidades[producto.id] || 0;
 
-  const imagenes = card.querySelectorAll(".producto-slider img");
-
-  imagenes.forEach((imagen) => {
-    const imgModal = document.createElement("img");
-    imgModal.src = imagen.src;
-    imgModal.alt = imagen.alt;
-    modalSlider.appendChild(imgModal);
-  });
+  modalSlider.innerHTML = producto.imagenes
+    .map((imagen) => {
+      return `
+        <img src="${obtenerRutaImagen(imagen)}" alt="${producto.nombre}">
+      `;
+    })
+    .join("");
 
   productoModal.classList.add("modal-activo");
 }
@@ -97,45 +221,43 @@ function cerrarProductoModal() {
   productoActivo = null;
 }
 
-productoCards.forEach((card) => {
-  card.dataset.cantidad = card.dataset.cantidad || 0;
+if (productosGrid) {
+  productosGrid.addEventListener("click", function (event) {
+    const botonSumar = event.target.closest(".btn-sumar");
+    const botonRestar = event.target.closest(".btn-restar");
+    const botonCarrito = event.target.closest(".btn-carrito");
+    const card = event.target.closest(".producto-card");
 
-  const btnRestar = card.querySelector(".btn-restar");
-  const btnSumar = card.querySelector(".btn-sumar");
-  const btnCarrito = card.querySelector(".btn-carrito");
+    if (botonSumar) {
+      const idProducto = Number(botonSumar.dataset.id);
+      const cantidadActual = cantidades[idProducto] || 0;
 
-  card.addEventListener("click", function (event) {
-    if (event.target.closest("button")) return;
+      actualizarCantidad(idProducto, cantidadActual + 1);
+      return;
+    }
 
-    abrirModal(card);
+    if (botonRestar) {
+      const idProducto = Number(botonRestar.dataset.id);
+      const cantidadActual = cantidades[idProducto] || 0;
+
+      actualizarCantidad(idProducto, cantidadActual - 1);
+      return;
+    }
+
+    if (botonCarrito) {
+      const idProducto = Number(botonCarrito.dataset.id);
+
+      agregarAlCarrito(idProducto);
+      return;
+    }
+
+    if (card) {
+      const idProducto = Number(card.dataset.id);
+
+      abrirModal(idProducto);
+    }
   });
-
-  if (btnRestar) {
-    btnRestar.addEventListener("click", function (event) {
-      event.stopPropagation();
-
-      const cantidadActual = obtenerCantidad(card);
-      actualizarCantidad(card, cantidadActual - 1);
-    });
-  }
-
-  if (btnSumar) {
-    btnSumar.addEventListener("click", function (event) {
-      event.stopPropagation();
-
-      const cantidadActual = obtenerCantidad(card);
-      actualizarCantidad(card, cantidadActual + 1);
-    });
-  }
-
-  if (btnCarrito) {
-    btnCarrito.addEventListener("click", function (event) {
-      event.stopPropagation();
-
-      agregarAlCarrito(card);
-    });
-  }
-});
+}
 
 if (cerrarModal) {
   cerrarModal.addEventListener("click", cerrarProductoModal);
@@ -153,8 +275,9 @@ if (modalRestar) {
   modalRestar.addEventListener("click", function () {
     if (!productoActivo) return;
 
-    const cantidadActual = obtenerCantidad(productoActivo);
-    actualizarCantidad(productoActivo, cantidadActual - 1);
+    const cantidadActual = cantidades[productoActivo.id] || 0;
+
+    actualizarCantidad(productoActivo.id, cantidadActual - 1);
   });
 }
 
@@ -162,8 +285,9 @@ if (modalSumar) {
   modalSumar.addEventListener("click", function () {
     if (!productoActivo) return;
 
-    const cantidadActual = obtenerCantidad(productoActivo);
-    actualizarCantidad(productoActivo, cantidadActual + 1);
+    const cantidadActual = cantidades[productoActivo.id] || 0;
+
+    actualizarCantidad(productoActivo.id, cantidadActual + 1);
   });
 }
 
@@ -171,6 +295,8 @@ if (modalAgregarCarrito) {
   modalAgregarCarrito.addEventListener("click", function () {
     if (!productoActivo) return;
 
-    agregarAlCarrito(productoActivo);
+    agregarAlCarrito(productoActivo.id);
   });
 }
+
+cargarProductos();

@@ -20,13 +20,25 @@ function estaEnCarpetaPages() {
 }
 
 function obtenerRutaJson() {
-  return "/data/productos.json";
+  return estaEnCarpetaPages()
+    ? "../data/productos.json"
+    : "data/productos.json";
 }
 
 function obtenerRutaImagen(rutaImagen) {
   return estaEnCarpetaPages()
     ? `../img/${rutaImagen}`
     : `img/${rutaImagen}`;
+}
+
+function obtenerRutaLogin() {
+  return estaEnCarpetaPages()
+    ? "login.html"
+    : "pages/login.html";
+}
+
+function usuarioTieneSesion() {
+  return sessionStorage.getItem("usuarioLogueado") === "true";
 }
 
 function obtenerCategoriaActual() {
@@ -78,6 +90,8 @@ function renderizarProductos() {
 function crearCardProducto(producto) {
   cantidades[producto.id] = cantidades[producto.id] || 0;
 
+  const estaLogueado = usuarioTieneSesion();
+
   const imagenesHtml = producto.imagenes
     .map((imagen) => {
       return `
@@ -93,14 +107,29 @@ function crearCardProducto(producto) {
       </div>
 
       <h3>${producto.nombre}</h3>
-      <p>${producto.precioTexto}</p>
 
-      <div class="producto-acciones">
-        <button class="btn-cantidad btn-restar" type="button" data-id="${producto.id}">-</button>
-        <span class="cantidad-producto" id="cantidad-${producto.id}">${cantidades[producto.id]}</span>
-        <button class="btn-cantidad btn-sumar" type="button" data-id="${producto.id}">+</button>
-        <button class="btn-carrito" type="button" data-id="${producto.id}" aria-label="Agregar al carrito">🛒</button>
-      </div>
+      ${
+        estaLogueado
+          ? `<p>${producto.precioTexto}</p>`
+          : `
+            <p class="precio-bloqueado">
+              Iniciá sesión para ver precio
+            </p>
+          `
+      }
+
+      ${
+        estaLogueado
+          ? `
+            <div class="producto-acciones">
+              <button class="btn-cantidad btn-restar" type="button" data-id="${producto.id}">-</button>
+              <span class="cantidad-producto" id="cantidad-${producto.id}">${cantidades[producto.id]}</span>
+              <button class="btn-cantidad btn-sumar" type="button" data-id="${producto.id}">+</button>
+              <button class="btn-carrito" type="button" data-id="${producto.id}" aria-label="Agregar al carrito">🛒</button>
+            </div>
+          `
+          : ""
+      }
     </article>
   `;
 }
@@ -199,6 +228,11 @@ function animarProductoAlCarrito(elementoOrigen) {
 }
 
 function agregarAlCarrito(idProducto, elementoOrigen = null) {
+  if (!usuarioTieneSesion()) {
+    mostrarAvisoCarrito("Para agregar productos al carrito, iniciá sesión.");
+    return;
+  }
+
   const producto = obtenerProductoPorId(idProducto);
   const cantidad = cantidades[idProducto] || 0;
 
@@ -237,6 +271,35 @@ function agregarAlCarrito(idProducto, elementoOrigen = null) {
   }
 }
 
+function configurarModalSegunSesion(producto) {
+  const estaLogueado = usuarioTieneSesion();
+
+  if (estaLogueado) {
+    modalPrecio.innerHTML = producto.precioTexto;
+
+    const modalAcciones = document.querySelector(".modal-acciones");
+
+    if (modalAcciones) {
+      modalAcciones.style.display = "flex";
+    }
+
+    return;
+  }
+
+  modalPrecio.innerHTML = `
+    <span class="modal-precio-bloqueado">
+      Para ver precios,
+      <a href="${obtenerRutaLogin()}">iniciá sesión</a>
+    </span>
+  `;
+
+  const modalAcciones = document.querySelector(".modal-acciones");
+
+  if (modalAcciones) {
+    modalAcciones.style.display = "none";
+  }
+}
+
 function abrirModal(idProducto) {
   if (!productoModal || !modalSlider) return;
 
@@ -248,8 +311,9 @@ function abrirModal(idProducto) {
 
   modalTitulo.textContent = producto.nombre;
   modalDescripcion.textContent = producto.descripcion;
-  modalPrecio.textContent = producto.precioTexto;
   modalCantidad.textContent = cantidades[producto.id] || 0;
+
+  configurarModalSegunSesion(producto);
 
   modalSlider.innerHTML = producto.imagenes
     .map((imagen) => {

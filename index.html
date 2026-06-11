@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link rel="icon" href="img/icono.png" type="image/svg+xml">
+  <link rel="icon" href="img/icono.png" type="image/png">
   <link rel="stylesheet" href="css/style.css">
 
   <title>Pulso | Inicio</title>
@@ -13,34 +13,7 @@
 
 <body>
 
-  <header>
-    <nav class="navbar">
-      <div class="logo">
-        <a href="index.html">
-          <img src="img/icono.png" alt="Logo Pulso">
-        </a>
-      </div>
-
-      <ul class="nav-links nav-left">
-        <li><a href="index.html">Home</a></li>
-
-        <li class="dropdown">
-          <a href="#">Categorías</a>
-          <ul class="dropdown-menu">
-            <li><a href="pages/remeras.html">Remeras</a></li>
-            <li><a href="pages/buzos.html">Buzos</a></li>
-            <li><a href="pages/pantalones.html">Pantalones</a></li>
-          </ul>
-        </li>
-      </ul>
-
-      <ul class="nav-links nav-right">
-        <li><a href="pages/login.html">Login</a></li>
-        <li><a href="pages/login.html" id="logoutBtn">Logout</a></li>
-        <li><a href="pages/registro.html">Registro</a></li>
-      </ul>
-    </nav>
-  </header>
+  <header></header>
 
   <main class="contenedor">
     <section class="showcase">
@@ -72,10 +45,50 @@
         </div>
       </section>
     </section>
+
+    <section class="home-productos-logueado" id="homeProductosLogueado">
+      <div class="home-productos-titulo">
+        <span>Destacados</span>
+        <h2>Productos elegidos para vos</h2>
+        <p id="homeUsuarioTexto">
+          Mirá productos destacados de cada categoría.
+        </p>
+      </div>
+
+      <div class="home-productos-contenido" id="homeProductosContenido"></div>
+    </section>
+    <div class="producto-modal" id="productoModal">
+      <div class="modal-contenido">
+        <button class="modal-cerrar" id="cerrarModal" type="button">×</button>
+
+        <div class="modal-slider" id="modalSlider"></div>
+
+        <div class="modal-info">
+          <h2 id="modalTitulo"></h2>
+          <p id="modalDescripcion"></p>
+          <strong id="modalPrecio"></strong>
+
+          <div class="modal-acciones">
+            <div class="modal-cantidad-box">
+              <button class="btn-cantidad modal-control-btn" id="modalRestar" type="button">-</button>
+              <span class="cantidad-producto modal-cantidad-numero" id="modalCantidad">0</span>
+              <button class="btn-cantidad modal-control-btn" id="modalSumar" type="button">+</button>
+            </div>
+
+            <button class="btn-carrito modal-btn-carrito" id="modalAgregarCarrito" type="button">
+              🛒 Agregar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
+
   <script src="js/data.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/navbar.js"></script>
+  <script src="js/home.js"></script>
+
 </body>
 
 </html>

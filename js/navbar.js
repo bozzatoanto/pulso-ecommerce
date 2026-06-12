@@ -46,17 +46,19 @@ function renderizarNavbar() {
         </li>
       </ul>
 
-      <ul class="nav-links nav-right">
+<ul class="nav-links nav-right">
+  ${
+    estaLogueado
+      ? `
         <li><a href="${obtenerRuta(carrito)}">Carrito</a></li>
-        ${
-          estaLogueado
-            ? `<li><a href="#" id="logoutBtn">Logout</a></li>`
-            : `
-              <li><a href="${obtenerRuta(login)}">Login</a></li>
-              <li><a href="${obtenerRuta(registro)}">Registro</a></li>
-            `
-        }
-      </ul>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+      `
+      : `
+        <li><a href="${obtenerRuta(login)}">Login</a></li>
+        <li><a href="${obtenerRuta(registro)}">Registro</a></li>
+      `
+  }
+</ul>
     </nav>
   `;
 

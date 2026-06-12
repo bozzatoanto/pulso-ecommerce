@@ -70,9 +70,30 @@ async function cargarProductos() {
     }
   }
 }
+function mostrarAvisoPreciosCategoria() {
+  const sectionHead = document.querySelector(".section-head");
 
+  if (!sectionHead) return;
+
+  const avisoExistente = document.querySelector(".aviso-precios-login");
+
+  if (avisoExistente) {
+    avisoExistente.remove();
+  }
+
+  if (!usuarioTieneSesion()) {
+    const aviso = document.createElement("a");
+
+    aviso.href = obtenerRutaLogin();
+    aviso.classList.add("aviso-precios-login");
+    aviso.textContent = "Para ver precios, iniciá sesión";
+
+    sectionHead.appendChild(aviso);
+  }
+}
 function renderizarProductos() {
   if (!productosGrid) return;
+  mostrarAvisoPreciosCategoria();
 
   const categoriaActual = obtenerCategoriaActual();
 
@@ -108,15 +129,7 @@ function crearCardProducto(producto) {
 
       <h3>${producto.nombre}</h3>
 
-      ${
-        estaLogueado
-          ? `<p>${producto.precioTexto}</p>`
-          : `
-            <p class="precio-bloqueado">
-              Iniciá sesión para ver precio
-            </p>
-          `
-      }
+${estaLogueado ? `<p>${producto.precioTexto}</p>` : ""}
 
       ${
         estaLogueado

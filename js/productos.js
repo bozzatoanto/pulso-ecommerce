@@ -14,6 +14,8 @@ const modalAgregarCarrito = document.getElementById("modalAgregarCarrito");
 let productos = [];
 let productoActivo = null;
 let cantidades = {};
+let indiceImagenModal = 0;
+let avisoLoginMostrado = false;
 
 function estaEnCarpetaPages() {
   return window.location.pathname.includes("/pages/");
@@ -70,30 +72,9 @@ async function cargarProductos() {
     }
   }
 }
-function mostrarAvisoPreciosCategoria() {
-  const sectionHead = document.querySelector(".section-head");
 
-  if (!sectionHead) return;
-
-  const avisoExistente = document.querySelector(".aviso-precios-login");
-
-  if (avisoExistente) {
-    avisoExistente.remove();
-  }
-
-  if (!usuarioTieneSesion()) {
-    const aviso = document.createElement("a");
-
-    aviso.href = obtenerRutaLogin();
-    aviso.classList.add("aviso-precios-login");
-    aviso.textContent = "Para ver precios, iniciá sesión";
-
-    sectionHead.appendChild(aviso);
-  }
-}
 function renderizarProductos() {
   if (!productosGrid) return;
-  mostrarAvisoPreciosCategoria();
 
   const categoriaActual = obtenerCategoriaActual();
 
@@ -106,6 +87,8 @@ function renderizarProductos() {
   productosGrid.innerHTML = productosFiltrados
     .map((producto) => crearCardProducto(producto))
     .join("");
+
+  mostrarModalPreciosUnaVez();
 }
 
 function crearCardProducto(producto) {
@@ -121,15 +104,32 @@ function crearCardProducto(producto) {
     })
     .join("");
 
+  const flechasHtml =
+    producto.imagenes.length > 1
+      ? `
+        <button class="producto-flecha producto-flecha-anterior" type="button" data-id="${producto.id}" data-accion-slider="anterior">
+          ‹
+        </button>
+
+        <button class="producto-flecha producto-flecha-siguiente" type="button" data-id="${producto.id}" data-accion-slider="siguiente">
+          ›
+        </button>
+      `
+      : "";
+
   return `
     <article class="producto-card" data-id="${producto.id}">
-      <div class="producto-slider">
-        ${imagenesHtml}
+      <div class="producto-slider-box">
+        ${flechasHtml}
+
+        <div class="producto-slider" id="slider-${producto.id}">
+          ${imagenesHtml}
+        </div>
       </div>
 
       <h3>${producto.nombre}</h3>
 
-${estaLogueado ? `<p>${producto.precioTexto}</p>` : ""}
+      ${estaLogueado ? `<p>${producto.precioTexto}</p>` : ""}
 
       ${
         estaLogueado
@@ -148,7 +148,9 @@ ${estaLogueado ? `<p>${producto.precioTexto}</p>` : ""}
 }
 
 function obtenerProductoPorId(idProducto) {
-  return productos.find((producto) => producto.id === idProducto);
+  return productos.find((producto) => {
+    return String(producto.id) === String(idProducto);
+  });
 }
 
 function actualizarCantidad(idProducto, nuevaCantidad) {
@@ -160,7 +162,11 @@ function actualizarCantidad(idProducto, nuevaCantidad) {
     cantidadCard.textContent = cantidades[idProducto];
   }
 
-  if (productoActivo && productoActivo.id === idProducto && modalCantidad) {
+  if (
+    productoActivo &&
+    String(productoActivo.id) === String(idProducto) &&
+    modalCantidad
+  ) {
     modalCantidad.textContent = cantidades[idProducto];
   }
 }
@@ -189,7 +195,12 @@ function obtenerCarrito() {
     return [];
   }
 
-  return JSON.parse(carritoGuardado);
+  try {
+    return JSON.parse(carritoGuardado);
+  } catch (error) {
+    console.error("Error al leer carrito:", error);
+    return [];
+  }
 }
 
 function guardarCarrito(carrito) {
@@ -247,9 +258,13 @@ function agregarAlCarrito(idProducto, elementoOrigen = null) {
   }
 
   const producto = obtenerProductoPorId(idProducto);
-  const cantidad = cantidades[idProducto] || 0;
 
-  if (!producto) return;
+  if (!producto) {
+    mostrarAvisoCarrito("No se encontró el producto.");
+    return;
+  }
+
+  const cantidad = cantidades[producto.id] || cantidades[idProducto] || 0;
 
   if (cantidad <= 0) {
     mostrarAvisoCarrito("Primero elegí una cantidad para agregar al carrito.");
@@ -259,7 +274,7 @@ function agregarAlCarrito(idProducto, elementoOrigen = null) {
   const carrito = obtenerCarrito();
 
   const productoExistente = carrito.find((item) => {
-    return item.id === producto.id;
+    return String(item.id) === String(producto.id);
   });
 
   if (productoExistente) {
@@ -276,8 +291,7 @@ function agregarAlCarrito(idProducto, elementoOrigen = null) {
   }
 
   guardarCarrito(carrito);
-
-  actualizarCantidad(idProducto, 0);
+  actualizarCantidad(producto.id, 0);
 
   if (elementoOrigen) {
     animarProductoAlCarrito(elementoOrigen);
@@ -286,11 +300,10 @@ function agregarAlCarrito(idProducto, elementoOrigen = null) {
 
 function configurarModalSegunSesion(producto) {
   const estaLogueado = usuarioTieneSesion();
+  const modalAcciones = document.querySelector(".modal-acciones");
 
   if (estaLogueado) {
     modalPrecio.innerHTML = producto.precioTexto;
-
-    const modalAcciones = document.querySelector(".modal-acciones");
 
     if (modalAcciones) {
       modalAcciones.style.display = "flex";
@@ -306,11 +319,113 @@ function configurarModalSegunSesion(producto) {
     </span>
   `;
 
-  const modalAcciones = document.querySelector(".modal-acciones");
-
   if (modalAcciones) {
     modalAcciones.style.display = "none";
   }
+}
+
+function crearControlesImagenModal() {
+  const modalContenido = document.querySelector(".modal-contenido");
+
+  if (!modalContenido) return;
+
+  if (document.getElementById("modalFlechaAnterior")) return;
+
+  const botonAnterior = document.createElement("button");
+  const botonSiguiente = document.createElement("button");
+
+  botonAnterior.id = "modalFlechaAnterior";
+  botonSiguiente.id = "modalFlechaSiguiente";
+
+  botonAnterior.type = "button";
+  botonSiguiente.type = "button";
+
+  botonAnterior.classList.add("modal-flecha", "modal-flecha-anterior");
+  botonSiguiente.classList.add("modal-flecha", "modal-flecha-siguiente");
+
+  botonAnterior.textContent = "‹";
+  botonSiguiente.textContent = "›";
+
+  modalContenido.appendChild(botonAnterior);
+  modalContenido.appendChild(botonSiguiente);
+
+  botonAnterior.addEventListener("click", function (event) {
+    event.stopPropagation();
+    cambiarImagenModal(-1);
+  });
+
+  botonSiguiente.addEventListener("click", function (event) {
+    event.stopPropagation();
+    cambiarImagenModal(1);
+  });
+}
+
+function actualizarControlesImagenModal() {
+  const botonAnterior = document.getElementById("modalFlechaAnterior");
+  const botonSiguiente = document.getElementById("modalFlechaSiguiente");
+
+  if (!productoActivo || !botonAnterior || !botonSiguiente) return;
+
+  const totalImagenes = productoActivo.imagenes.length;
+
+  if (totalImagenes <= 1) {
+    botonAnterior.style.display = "none";
+    botonSiguiente.style.display = "none";
+    return;
+  }
+
+  botonAnterior.style.display = "grid";
+  botonSiguiente.style.display = "grid";
+}
+
+function moverSliderModal() {
+  const imagenes = modalSlider.querySelectorAll("img");
+  const imagenActual = imagenes[indiceImagenModal];
+
+  if (!imagenActual) return;
+
+  modalSlider.scrollTo({
+    left: imagenActual.offsetLeft,
+    behavior: "smooth"
+  });
+
+  actualizarControlesImagenModal();
+}
+
+function cambiarImagenModal(direccion) {
+  if (!productoActivo) return;
+
+  const totalImagenes = productoActivo.imagenes.length;
+
+  indiceImagenModal += direccion;
+
+  if (indiceImagenModal < 0) {
+    indiceImagenModal = totalImagenes - 1;
+  }
+
+  if (indiceImagenModal >= totalImagenes) {
+    indiceImagenModal = 0;
+  }
+
+  moverSliderModal();
+}
+
+function cargarImagenesModal(producto) {
+  indiceImagenModal = 0;
+
+  modalSlider.innerHTML = producto.imagenes
+    .map((imagen) => {
+      return `
+        <img src="${obtenerRutaImagen(imagen)}" alt="${producto.nombre}">
+      `;
+    })
+    .join("");
+
+  crearControlesImagenModal();
+
+  setTimeout(() => {
+    moverSliderModal();
+  }, 0);
 }
 
 function abrirModal(idProducto) {
@@ -327,14 +442,7 @@ function abrirModal(idProducto) {
   modalCantidad.textContent = cantidades[producto.id] || 0;
 
   configurarModalSegunSesion(producto);
-
-  modalSlider.innerHTML = producto.imagenes
-    .map((imagen) => {
-      return `
-        <img src="${obtenerRutaImagen(imagen)}" alt="${producto.nombre}">
-      `;
-    })
-    .join("");
+  cargarImagenesModal(producto);
 
   productoModal.classList.add("modal-activo");
 }
@@ -344,17 +452,119 @@ function cerrarProductoModal() {
 
   productoModal.classList.remove("modal-activo");
   productoActivo = null;
+  indiceImagenModal = 0;
+}
+
+function crearModalPreciosLogin() {
+  const modalExistente = document.getElementById("modalPreciosLogin");
+
+  if (modalExistente) return;
+
+  const modal = document.createElement("div");
+
+  modal.classList.add("modal-precios-login");
+  modal.id = "modalPreciosLogin";
+
+  modal.innerHTML = `
+    <div class="modal-precios-card">
+      <span class="modal-precios-tag">Acceso a precios</span>
+
+      <h2>Iniciá sesión para ver precios</h2>
+
+      <p>
+        Podés seguir navegando los productos, pero para ver precios y agregar artículos al carrito necesitás iniciar sesión.
+      </p>
+
+      <div class="modal-precios-acciones">
+        <button class="btn-seguir-viendo" id="seguirViendoProductos" type="button">
+          Seguir viendo
+        </button>
+
+        <a class="btn-ir-login" href="${obtenerRutaLogin()}">
+          Iniciar sesión
+        </a>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  const seguirViendoProductos = document.getElementById("seguirViendoProductos");
+
+  seguirViendoProductos.addEventListener("click", cerrarModalPreciosLogin);
+
+  modal.addEventListener("click", function (event) {
+    if (event.target === modal) {
+      cerrarModalPreciosLogin();
+    }
+  });
+}
+
+function mostrarModalPreciosUnaVez() {
+  if (usuarioTieneSesion()) return;
+
+  if (avisoLoginMostrado) return;
+
+  crearModalPreciosLogin();
+
+  const modal = document.getElementById("modalPreciosLogin");
+
+  if (!modal) return;
+
+  modal.classList.add("modal-precios-activo");
+  avisoLoginMostrado = true;
+}
+
+function cerrarModalPreciosLogin() {
+  const modal = document.getElementById("modalPreciosLogin");
+
+  if (!modal) return;
+
+  modal.classList.remove("modal-precios-activo");
+}
+
+function moverSliderCard(idProducto, accionSlider) {
+  const slider = document.getElementById(`slider-${idProducto}`);
+
+  if (!slider) return;
+
+  const movimiento = slider.clientWidth;
+
+  if (accionSlider === "siguiente") {
+    slider.scrollBy({
+      left: movimiento,
+      behavior: "smooth"
+    });
+  }
+
+  if (accionSlider === "anterior") {
+    slider.scrollBy({
+      left: -movimiento,
+      behavior: "smooth"
+    });
+  }
 }
 
 if (productosGrid) {
   productosGrid.addEventListener("click", function (event) {
+    const botonSlider = event.target.closest(".producto-flecha");
     const botonSumar = event.target.closest(".btn-sumar");
     const botonRestar = event.target.closest(".btn-restar");
     const botonCarrito = event.target.closest(".btn-carrito");
     const card = event.target.closest(".producto-card");
 
+    if (botonSlider) {
+      event.stopPropagation();
+
+      const idProducto = botonSlider.dataset.id;
+      const accionSlider = botonSlider.dataset.accionSlider;
+
+      moverSliderCard(idProducto, accionSlider);
+      return;
+    }
+
     if (botonSumar) {
-      const idProducto = Number(botonSumar.dataset.id);
+      const idProducto = botonSumar.dataset.id;
       const cantidadActual = cantidades[idProducto] || 0;
 
       actualizarCantidad(idProducto, cantidadActual + 1);
@@ -362,7 +572,7 @@ if (productosGrid) {
     }
 
     if (botonRestar) {
-      const idProducto = Number(botonRestar.dataset.id);
+      const idProducto = botonRestar.dataset.id;
       const cantidadActual = cantidades[idProducto] || 0;
 
       actualizarCantidad(idProducto, cantidadActual - 1);
@@ -370,7 +580,7 @@ if (productosGrid) {
     }
 
     if (botonCarrito) {
-      const idProducto = Number(botonCarrito.dataset.id);
+      const idProducto = botonCarrito.dataset.id;
       const cardProducto = botonCarrito.closest(".producto-card");
 
       agregarAlCarrito(idProducto, cardProducto);
@@ -378,7 +588,7 @@ if (productosGrid) {
     }
 
     if (card) {
-      const idProducto = Number(card.dataset.id);
+      const idProducto = card.dataset.id;
 
       abrirModal(idProducto);
     }
@@ -421,7 +631,8 @@ if (modalAgregarCarrito) {
   modalAgregarCarrito.addEventListener("click", function () {
     if (!productoActivo) return;
 
-    const imagenModal = modalSlider.querySelector("img");
+    const imagenesModal = modalSlider.querySelectorAll("img");
+    const imagenModal = imagenesModal[indiceImagenModal] || modalSlider.querySelector("img");
 
     agregarAlCarrito(productoActivo.id, imagenModal);
   });

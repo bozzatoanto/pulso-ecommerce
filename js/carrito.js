@@ -23,7 +23,7 @@ function formatearPrecio(precio) {
 
 function obtenerRutaImagenCarrito(imagen) {
   if (!imagen) {
-    return "";
+    return ""; 
   }
 
   if (imagen.startsWith("../img/")) {

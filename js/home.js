@@ -17,6 +17,7 @@ const modalAgregarCarrito = document.getElementById("modalAgregarCarrito");
 let productosHome = [];
 let productoActivo = null;
 let cantidades = {};
+let indiceImagenModal = 0;
 
 const categoriasHome = [
   {
@@ -74,7 +75,7 @@ async function cargarProductosHome() {
   if (!puedeMostrarProductos) return;
 
   try {
-    const respuesta = await fetch("/data/productos.json");
+    const respuesta = await fetch("data/productos.json");
 
     if (!respuesta.ok) {
       throw new Error("No se pudo cargar productos.json");
@@ -101,21 +102,7 @@ async function cargarProductosHome() {
 
             <div class="home-productos-grid">
               ${productosCategoria
-                .map((producto) => {
-                  cantidades[producto.id] = cantidades[producto.id] || 0;
-
-                  return `
-                    <article class="home-producto-card" data-id="${producto.id}">
-                      <img src="${obtenerRutaImagenHome(producto.imagenes[0])}" alt="${producto.nombre}">
-
-                      <div class="home-producto-overlay">
-                        <span>${categoria.nombre}</span>
-                        <h4>${producto.nombre}</h4>
-                        <p>${producto.precioTexto}</p>
-                      </div>
-                    </article>
-                  `;
-                })
+                .map((producto) => crearCardHome(producto, categoria.nombre))
                 .join("")}
             </div>
           </article>
@@ -133,14 +120,63 @@ async function cargarProductosHome() {
   }
 }
 
+function crearCardHome(producto, nombreCategoria) {
+  cantidades[producto.id] = cantidades[producto.id] || 0;
+
+  const imagenesHtml = producto.imagenes
+    .map((imagen) => {
+      return `
+        <img src="${obtenerRutaImagenHome(imagen)}" alt="${producto.nombre}">
+      `;
+    })
+    .join("");
+
+  const flechasHtml =
+    producto.imagenes.length > 1
+      ? `
+        <button class="home-producto-flecha home-producto-flecha-anterior" type="button" data-id="${producto.id}" data-accion-slider="anterior">
+          ‹
+        </button>
+
+        <button class="home-producto-flecha home-producto-flecha-siguiente" type="button" data-id="${producto.id}" data-accion-slider="siguiente">
+          ›
+        </button>
+      `
+      : "";
+
+  return `
+    <article class="home-producto-card" data-id="${producto.id}">
+      <div class="home-producto-slider-box">
+        ${flechasHtml}
+
+        <div class="home-producto-slider" id="home-slider-${producto.id}">
+          ${imagenesHtml}
+        </div>
+      </div>
+
+      <div class="home-producto-overlay">
+        <span>${nombreCategoria}</span>
+        <h4>${producto.nombre}</h4>
+        <p>${producto.precioTexto}</p>
+      </div>
+    </article>
+  `;
+}
+
 function obtenerProductoPorId(idProducto) {
-  return productosHome.find((producto) => producto.id === idProducto);
+  return productosHome.find((producto) => {
+    return String(producto.id) === String(idProducto);
+  });
 }
 
 function actualizarCantidad(idProducto, nuevaCantidad) {
   cantidades[idProducto] = Math.max(0, nuevaCantidad);
 
-  if (productoActivo && productoActivo.id === idProducto && modalCantidad) {
+  if (
+    productoActivo &&
+    String(productoActivo.id) === String(idProducto) &&
+    modalCantidad
+  ) {
     modalCantidad.textContent = cantidades[idProducto];
   }
 }
@@ -152,7 +188,11 @@ function obtenerCarrito() {
     return [];
   }
 
-  return JSON.parse(carritoGuardado);
+  try {
+    return JSON.parse(carritoGuardado);
+  } catch (error) {
+    return [];
+  }
 }
 
 function guardarCarrito(carrito) {
@@ -176,13 +216,18 @@ function mostrarAvisoCarrito(mensaje) {
   }, 2200);
 }
 
+function obtenerImagenParaAnimacion(elementoOrigen) {
+  if (!elementoOrigen) return null;
+
+  if (elementoOrigen.tagName === "IMG") {
+    return elementoOrigen;
+  }
+
+  return elementoOrigen.querySelector("img");
+}
+
 function animarProductoAlCarrito(elementoOrigen) {
-  if (!elementoOrigen) return;
-
-  const imagenProducto = elementoOrigen.tagName === "IMG"
-    ? elementoOrigen
-    : elementoOrigen.querySelector("img");
-
+  const imagenProducto = obtenerImagenParaAnimacion(elementoOrigen);
   const linkCarrito = document.querySelector('a[href$="carrito.html"]');
 
   if (!imagenProducto || !linkCarrito) return;
@@ -217,9 +262,10 @@ function animarProductoAlCarrito(elementoOrigen) {
 
 function agregarAlCarrito(idProducto, elementoOrigen = null) {
   const producto = obtenerProductoPorId(idProducto);
-  const cantidad = cantidades[idProducto] || 0;
 
   if (!producto) return;
+
+  const cantidad = cantidades[producto.id] || cantidades[idProducto] || 0;
 
   if (cantidad <= 0) {
     mostrarAvisoCarrito("Primero elegí una cantidad para agregar al carrito.");
@@ -229,7 +275,7 @@ function agregarAlCarrito(idProducto, elementoOrigen = null) {
   const carrito = obtenerCarrito();
 
   const productoExistente = carrito.find((item) => {
-    return item.id === producto.id;
+    return String(item.id) === String(producto.id);
   });
 
   if (productoExistente) {
@@ -246,11 +292,115 @@ function agregarAlCarrito(idProducto, elementoOrigen = null) {
   }
 
   guardarCarrito(carrito);
-  actualizarCantidad(idProducto, 0);
+  actualizarCantidad(producto.id, 0);
 
   if (elementoOrigen) {
     animarProductoAlCarrito(elementoOrigen);
   }
+}
+
+function crearControlesImagenModal() {
+  const modalContenido = document.querySelector(".modal-contenido");
+
+  if (!modalContenido) return;
+
+  if (document.getElementById("modalFlechaAnterior")) return;
+
+  const botonAnterior = document.createElement("button");
+  const botonSiguiente = document.createElement("button");
+
+  botonAnterior.id = "modalFlechaAnterior";
+  botonSiguiente.id = "modalFlechaSiguiente";
+
+  botonAnterior.type = "button";
+  botonSiguiente.type = "button";
+
+  botonAnterior.classList.add("modal-flecha", "modal-flecha-anterior");
+  botonSiguiente.classList.add("modal-flecha", "modal-flecha-siguiente");
+
+  botonAnterior.textContent = "‹";
+  botonSiguiente.textContent = "›";
+
+  modalContenido.appendChild(botonAnterior);
+  modalContenido.appendChild(botonSiguiente);
+
+  botonAnterior.addEventListener("click", function (event) {
+    event.stopPropagation();
+    cambiarImagenModal(-1);
+  });
+
+  botonSiguiente.addEventListener("click", function (event) {
+    event.stopPropagation();
+    cambiarImagenModal(1);
+  });
+}
+
+function actualizarControlesImagenModal() {
+  const botonAnterior = document.getElementById("modalFlechaAnterior");
+  const botonSiguiente = document.getElementById("modalFlechaSiguiente");
+
+  if (!productoActivo || !botonAnterior || !botonSiguiente) return;
+
+  const totalImagenes = productoActivo.imagenes.length;
+
+  if (totalImagenes <= 1) {
+    botonAnterior.style.display = "none";
+    botonSiguiente.style.display = "none";
+    return;
+  }
+
+  botonAnterior.style.display = "grid";
+  botonSiguiente.style.display = "grid";
+}
+
+function moverSliderModal() {
+  const imagenes = modalSlider.querySelectorAll("img");
+  const imagenActual = imagenes[indiceImagenModal];
+
+  if (!imagenActual) return;
+
+  modalSlider.scrollTo({
+    left: imagenActual.offsetLeft,
+    behavior: "smooth"
+  });
+
+  actualizarControlesImagenModal();
+}
+
+function cambiarImagenModal(direccion) {
+  if (!productoActivo) return;
+
+  const totalImagenes = productoActivo.imagenes.length;
+
+  indiceImagenModal += direccion;
+
+  if (indiceImagenModal < 0) {
+    indiceImagenModal = totalImagenes - 1;
+  }
+
+  if (indiceImagenModal >= totalImagenes) {
+    indiceImagenModal = 0;
+  }
+
+  moverSliderModal();
+}
+
+function cargarImagenesModal(producto) {
+  indiceImagenModal = 0;
+
+  modalSlider.innerHTML = producto.imagenes
+    .map((imagen) => {
+      return `
+        <img src="${obtenerRutaImagenHome(imagen)}" alt="${producto.nombre}">
+      `;
+    })
+    .join("");
+
+  crearControlesImagenModal();
+
+  setTimeout(() => {
+    moverSliderModal();
+  }, 0);
 }
 
 function abrirModal(idProducto) {
@@ -267,13 +417,7 @@ function abrirModal(idProducto) {
   modalPrecio.textContent = producto.precioTexto;
   modalCantidad.textContent = cantidades[producto.id] || 0;
 
-  modalSlider.innerHTML = producto.imagenes
-    .map((imagen) => {
-      return `
-        <img src="${obtenerRutaImagenHome(imagen)}" alt="${producto.nombre}">
-      `;
-    })
-    .join("");
+  cargarImagenesModal(producto);
 
   productoModal.classList.add("modal-activo");
 }
@@ -283,18 +427,52 @@ function cerrarProductoModal() {
 
   productoModal.classList.remove("modal-activo");
   productoActivo = null;
+  indiceImagenModal = 0;
+}
+
+function moverSliderHome(idProducto, accionSlider) {
+  const slider = document.getElementById(`home-slider-${idProducto}`);
+
+  if (!slider) return;
+
+  const movimiento = slider.clientWidth;
+
+  if (accionSlider === "siguiente") {
+    slider.scrollBy({
+      left: movimiento,
+      behavior: "smooth"
+    });
+  }
+
+  if (accionSlider === "anterior") {
+    slider.scrollBy({
+      left: -movimiento,
+      behavior: "smooth"
+    });
+  }
 }
 
 if (homeProductosContenido) {
   homeProductosContenido.addEventListener("click", function (event) {
+    const botonSlider = event.target.closest(".home-producto-flecha");
     const botonCategoria = event.target.closest(".home-categoria-head a");
+    const card = event.target.closest(".home-producto-card");
+
+    if (botonSlider) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const idProducto = botonSlider.dataset.id;
+      const accionSlider = botonSlider.dataset.accionSlider;
+
+      moverSliderHome(idProducto, accionSlider);
+      return;
+    }
 
     if (botonCategoria) return;
 
-    const card = event.target.closest(".home-producto-card");
-
     if (card) {
-      const idProducto = Number(card.dataset.id);
+      const idProducto = card.dataset.id;
 
       abrirModal(idProducto);
     }
@@ -337,7 +515,8 @@ if (modalAgregarCarrito) {
   modalAgregarCarrito.addEventListener("click", function () {
     if (!productoActivo) return;
 
-    const imagenModal = modalSlider.querySelector("img");
+    const imagenesModal = modalSlider.querySelectorAll("img");
+    const imagenModal = imagenesModal[indiceImagenModal] || modalSlider.querySelector("img");
 
     agregarAlCarrito(productoActivo.id, imagenModal);
   });

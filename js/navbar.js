@@ -12,6 +12,80 @@ function obtenerRutaLogo() {
   return estaEnCarpetaPages() ? "../img/icono.png" : "img/icono.png";
 }
 
+function obtenerRutaLogin() {
+  return estaEnCarpetaPages() ? "login.html" : "pages/login.html";
+}
+
+function crearModalLogout() {
+  const modalExistente = document.getElementById("modalConfirmacionLogout");
+
+  if (modalExistente) return;
+
+  const modal = document.createElement("div");
+
+  modal.classList.add("modal-confirmacion-eliminar", "modal-logout");
+  modal.id = "modalConfirmacionLogout";
+
+  modal.innerHTML = `
+    <div class="modal-confirmacion-card modal-logout-card">
+      <span class="modal-confirmacion-tag modal-logout-tag">Cerrar sesión</span>
+
+      <h2>¿Querés salir de tu cuenta?</h2>
+
+      <p>
+        Vas a cerrar tu sesión actual. Para volver a ver precios, agregar productos o acceder al carrito, vas a tener que iniciar sesión nuevamente.
+      </p>
+
+      <div class="modal-confirmacion-acciones">
+        <button class="btn-cancelar-eliminar" id="cancelarLogout" type="button">
+          Cancelar
+        </button>
+
+        <button class="btn-confirmar-eliminar" id="confirmarLogout" type="button">
+          Sí, salir
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  const cancelarLogout = document.getElementById("cancelarLogout");
+  const confirmarLogout = document.getElementById("confirmarLogout");
+
+  cancelarLogout.addEventListener("click", cerrarModalLogout);
+  confirmarLogout.addEventListener("click", confirmarLogoutUsuario);
+
+  modal.addEventListener("click", function (event) {
+    if (event.target === modal) {
+      cerrarModalLogout();
+    }
+  });
+}
+
+function abrirModalLogout() {
+  crearModalLogout();
+
+  const modal = document.getElementById("modalConfirmacionLogout");
+
+  if (!modal) return;
+
+  modal.classList.add("modal-confirmacion-activo");
+}
+
+function cerrarModalLogout() {
+  const modal = document.getElementById("modalConfirmacionLogout");
+
+  if (!modal) return;
+
+  modal.classList.remove("modal-confirmacion-activo");
+}
+
+function confirmarLogoutUsuario() {
+  window.cerrarSesion();
+  window.location.href = obtenerRutaLogin();
+}
+
 function renderizarNavbar() {
   if (!header || !window.paginas || !window.usuarioEstaLogueado) return;
 
@@ -46,19 +120,19 @@ function renderizarNavbar() {
         </li>
       </ul>
 
-<ul class="nav-links nav-right">
-  ${
-    estaLogueado
-      ? `
-        <li><a href="${obtenerRuta(carrito)}">Carrito</a></li>
-        <li><a href="#" id="logoutBtn">Logout</a></li>
-      `
-      : `
-        <li><a href="${obtenerRuta(login)}">Login</a></li>
-        <li><a href="${obtenerRuta(registro)}">Registro</a></li>
-      `
-  }
-</ul>
+      <ul class="nav-links nav-right">
+        ${
+          estaLogueado
+            ? `
+              <li><a href="${obtenerRuta(carrito)}">Carrito</a></li>
+              <li><a href="#" id="logoutBtn">Logout</a></li>
+            `
+            : `
+              <li><a href="${obtenerRuta(login)}">Login</a></li>
+              <li><a href="${obtenerRuta(registro)}">Registro</a></li>
+            `
+        }
+      </ul>
     </nav>
   `;
 
@@ -67,14 +141,7 @@ function renderizarNavbar() {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function (event) {
       event.preventDefault();
-
-      window.cerrarSesion();
-
-      if (estaEnCarpetaPages()) {
-        window.location.href = "login.html";
-      } else {
-        window.location.href = "pages/login.html";
-      }
+      abrirModalLogout();
     });
   }
 }

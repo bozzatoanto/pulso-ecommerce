@@ -17,6 +17,8 @@ window.cerrarSesion = function () {
 };
 
 const loginForm = document.getElementById("loginForm");
+const registroForm = document.getElementById("registroForm");
+const authSubmitButton = document.querySelector(".auth-submit-full");
 
 if (loginForm) {
   loginForm.addEventListener("submit", function (event) {
@@ -33,5 +35,54 @@ if (loginForm) {
     window.iniciarSesion(email);
 
     window.location.href = "../index.html";
+  });
+}
+
+if (registroForm) {
+  registroForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const nombre = document.getElementById("nombre").value.trim();
+    const apellido = document.getElementById("apellido").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const fecha = document.getElementById("fecha").value;
+
+    if (
+      nombre === "" ||
+      apellido === "" ||
+      email === "" ||
+      password === "" ||
+      fecha === ""
+    ) {
+      alert("Completá todos los campos.");
+      return;
+    }
+
+    localStorage.setItem(
+      "usuarioRegistradoPulso",
+      JSON.stringify({
+        nombre,
+        apellido,
+        email,
+        fecha
+      })
+    );
+
+    window.iniciarSesion(email);
+
+    window.location.href = "../index.html";
+  });
+}
+
+if (authSubmitButton) {
+  authSubmitButton.addEventListener("mousemove", function (event) {
+    const rect = authSubmitButton.getBoundingClientRect();
+
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    authSubmitButton.style.setProperty("--mouse-x", `${x}px`);
+    authSubmitButton.style.setProperty("--mouse-y", `${y}px`);
   });
 }

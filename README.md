@@ -6,7 +6,7 @@
 **Materia:** Aplicaciones Web 1
 **Proyecto:** Tienda online de indumentaria urbana
 **Repositorio GitHub:** https://github.com/bozzatoanto/pulso-ecommerce
-**Link del proyecto publicado:** 
+**Link del proyecto publicado:** pulso-ecommerce.vercel.app
 **Link del video explicativo:** 
 
 ---
@@ -368,7 +368,7 @@ Al tocar Logout, se muestra un modal de confirmación. Si el usuario confirma, s
 El proyecto fue subido a un repositorio público de GitHub y publicado en una plataforma web para que pueda ser accedido desde cualquier navegador.
 
 **Repositorio:** https://github.com/bozzatoanto/pulso-ecommerce
-**Proyecto publicado:** 
+**Proyecto publicado:** pulso-ecommerce.vercel.app
 
 ---
 

@@ -2162,3 +2162,26 @@ body {
     font-size: 1.5rem;
   }
 }
+.carrito-info p {
+  display: none;
+}
+
+.carrito-cantidad .carrito-cantidad-numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 38px;
+  color: #ffffff !important;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.carrito-sidebar {
+  margin-top: -84px;
+}
+
+.carrito-resumen-card {
+  padding-top: 30px;
+}

@@ -108,11 +108,10 @@ function renderizarCarrito() {
 
           <div class="carrito-info">
             <h3>${producto.nombre}</h3>
-            <p>${producto.precioTexto}</p>
 
             <div class="carrito-cantidad">
               <button class="btn-carrito-cantidad" data-accion="restar" data-id="${producto.id}" type="button">-</button>
-              <span>${producto.cantidad}</span>
+              <span class="carrito-cantidad-numero">${producto.cantidad}</span>
               <button class="btn-carrito-cantidad" data-accion="sumar" data-id="${producto.id}" type="button">+</button>
             </div>
           </div>

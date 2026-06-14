@@ -1,5 +1,7 @@
 const carritoContenedor = document.getElementById("carritoContenedor");
 const carritoTotal = document.getElementById("carritoTotal");
+const cantidadProductos = document.getElementById("cantidadProductos");
+const btnFinalizarCompra = document.getElementById("btnFinalizarCompra");
 
 let idProductoAEliminar = null;
 
@@ -23,7 +25,7 @@ function formatearPrecio(precio) {
 
 function obtenerRutaImagenCarrito(imagen) {
   if (!imagen) {
-    return ""; 
+    return "";
   }
 
   if (imagen.startsWith("../img/")) {
@@ -43,21 +45,58 @@ function calcularTotal(carrito) {
   }, 0);
 }
 
+function calcularCantidadTotal(carrito) {
+  return carrito.reduce((total, producto) => {
+    return total + producto.cantidad;
+  }, 0);
+}
+
+function mostrarAvisoCarrito(mensaje) {
+  let aviso = document.querySelector(".aviso-carrito");
+
+  if (!aviso) {
+    aviso = document.createElement("div");
+    aviso.classList.add("aviso-carrito");
+    document.body.appendChild(aviso);
+  }
+
+  aviso.textContent = mensaje;
+  aviso.classList.add("aviso-carrito-activo");
+
+  setTimeout(() => {
+    aviso.classList.remove("aviso-carrito-activo");
+  }, 2200);
+}
+
+function actualizarResumen(carrito) {
+  if (carritoTotal) {
+    carritoTotal.textContent = formatearPrecio(calcularTotal(carrito));
+  }
+
+  if (cantidadProductos) {
+    cantidadProductos.textContent = calcularCantidadTotal(carrito);
+  }
+
+  if (btnFinalizarCompra) {
+    btnFinalizarCompra.disabled = carrito.length === 0;
+  }
+}
+
 function renderizarCarrito() {
   const carrito = obtenerCarrito();
 
-  if (!carritoContenedor || !carritoTotal) return;
+  if (!carritoContenedor) return;
+
+  actualizarResumen(carrito);
 
   if (carrito.length === 0) {
     carritoContenedor.innerHTML = `
       <div class="carrito-vacio">
         <h2>Tu carrito está vacío</h2>
         <p>Agregá productos desde las categorías para verlos acá.</p>
-        <a href="../index.html">Ver productos</a>
+        <a href="../index.html">Seguir comprando</a>
       </div>
     `;
-
-    carritoTotal.textContent = "$0";
     return;
   }
 
@@ -86,8 +125,6 @@ function renderizarCarrito() {
       `;
     })
     .join("");
-
-  carritoTotal.textContent = formatearPrecio(calcularTotal(carrito));
 }
 
 function sumarCantidad(idProducto) {
@@ -143,7 +180,7 @@ function crearModalConfirmacion() {
       <h2>¿Eliminar producto?</h2>
 
       <p>
-        Este producto se va a quitar del carrito. 
+        Este producto se va a quitar del carrito.
         Podés volver a agregarlo desde las categorías cuando quieras.
       </p>
 
@@ -209,6 +246,85 @@ function confirmarEliminacionProducto() {
   cerrarModalConfirmacion();
 }
 
+function crearModalFinalizarCompra() {
+  const modalExistente = document.getElementById("modalFinalizarCompra");
+
+  if (modalExistente) return;
+
+  const modal = document.createElement("div");
+
+  modal.classList.add("modal-confirmacion-eliminar");
+  modal.id = "modalFinalizarCompra";
+
+  modal.innerHTML = `
+    <div class="modal-confirmacion-card">
+      <span class="modal-confirmacion-tag">Último paso</span>
+
+      <h2>¿Finalizar compra?</h2>
+
+      <p>
+        Vamos a cerrar esta compra y vaciar el carrito para dejarlo listo para una nueva selección.
+      </p>
+
+      <div class="modal-confirmacion-acciones">
+        <button class="btn-cancelar-eliminar" id="cancelarFinalizarCompra" type="button">
+          Volver
+        </button>
+
+        <button class="btn-confirmar-eliminar" id="confirmarFinalizarCompra" type="button">
+          Finalizar
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  const cancelar = document.getElementById("cancelarFinalizarCompra");
+  const confirmar = document.getElementById("confirmarFinalizarCompra");
+
+  cancelar.addEventListener("click", cerrarModalFinalizarCompra);
+  confirmar.addEventListener("click", finalizarCompra);
+
+  modal.addEventListener("click", function (event) {
+    if (event.target === modal) {
+      cerrarModalFinalizarCompra();
+    }
+  });
+}
+
+function abrirModalFinalizarCompra() {
+  const carrito = obtenerCarrito();
+
+  if (carrito.length === 0) {
+    mostrarAvisoCarrito("Tu carrito está vacío.");
+    return;
+  }
+
+  crearModalFinalizarCompra();
+
+  const modal = document.getElementById("modalFinalizarCompra");
+
+  if (!modal) return;
+
+  modal.classList.add("modal-confirmacion-activo");
+}
+
+function cerrarModalFinalizarCompra() {
+  const modal = document.getElementById("modalFinalizarCompra");
+
+  if (!modal) return;
+
+  modal.classList.remove("modal-confirmacion-activo");
+}
+
+function finalizarCompra() {
+  localStorage.removeItem("carritoPulso");
+  renderizarCarrito();
+  cerrarModalFinalizarCompra();
+  mostrarAvisoCarrito("Compra finalizada con éxito.");
+}
+
 if (carritoContenedor) {
   carritoContenedor.addEventListener("click", function (event) {
     const botonCantidad = event.target.closest(".btn-carrito-cantidad");
@@ -229,11 +345,15 @@ if (carritoContenedor) {
 
     if (botonEliminar) {
       const idProducto = botonEliminar.dataset.id;
-
       abrirModalConfirmacion(idProducto);
     }
   });
 }
 
+if (btnFinalizarCompra) {
+  btnFinalizarCompra.addEventListener("click", abrirModalFinalizarCompra);
+}
+
 crearModalConfirmacion();
+crearModalFinalizarCompra();
 renderizarCarrito();

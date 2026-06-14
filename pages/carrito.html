@@ -14,30 +14,46 @@
 
   <header></header>
 
-  <main class="contenedor carrito-main">
-    <section class="carrito-section">
+  <main class="contenedor carrito-page">
+    <section class="carrito-header">
+      <span class="section-tag">TU SELECCIÓN</span>
+      <h1>Carrito</h1>
+      <p>Revisá tus productos antes de finalizar la compra.</p>
+    </section>
 
-      <div class="section-head">
-        <div>
-          <h1>Carrito</h1>
+    <section class="carrito-layout">
+      <div class="carrito-listado" id="carritoContenedor"></div>
+
+      <aside class="carrito-sidebar">
+        <div class="carrito-resumen-card">
+          <span class="carrito-resumen-tag">Resumen</span>
+          <h2>Tu compra</h2>
+
+          <div class="carrito-resumen-linea">
+            <span>Productos</span>
+            <strong id="cantidadProductos">0</strong>
+          </div>
+
+          <div class="carrito-resumen-linea total">
+            <span>Total</span>
+            <strong id="carritoTotal">$0</strong>
+          </div>
+
+          <div class="carrito-resumen-acciones">
+            <a href="../index.html" class="btn-seguir-comprando">Seguir comprando</a>
+            <button type="button" class="btn-finalizar-compra" id="btnFinalizarCompra">
+              Finalizar compra
+            </button>
+          </div>
         </div>
-      </div>
-
-      <div class="carrito-contenedor" id="carritoContenedor"></div>
-
-      <div class="carrito-resumen">
-        <h2>Resumen</h2>
-        <p>Total: <strong id="carritoTotal">$0</strong></p>
-      </div>
-
+      </aside>
     </section>
   </main>
 
-<script type="module" src="../js/data.js"></script>
-<script type="module" src="../js/auth.js"></script>
-<script type="module" src="../js/navbar.js"></script>
-<script type="module" src="../js/carrito.js"></script>
-
+  <script src="../js/data.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/carrito.js"></script>
 </body>
 
 </html>
